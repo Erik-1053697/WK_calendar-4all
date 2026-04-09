@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\TournamentMatch;
+use App\Policies\TournamentMatchPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -19,6 +21,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        \Illuminate\Support\Facades\Gate::policy(TournamentMatch::class, TournamentMatchPolicy::class);
     }
 }

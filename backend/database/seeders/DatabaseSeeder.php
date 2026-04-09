@@ -15,11 +15,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        User::factory()->create([
+            'name' => 'Demo User',
+            'email' => 'demo@wkcalendar.test',
+            'password' => 'password',
+        ]);
 
         User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
+            'name' => 'Admin User',
+            'email' => 'admin@wkcalendar.test',
+            'password' => 'password',
+            'is_admin' => true,
         ]);
+
+        $this->call(WorldCupMatchSeeder::class);
     }
 }
