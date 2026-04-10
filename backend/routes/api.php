@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AdminMatchController;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\PredictionController;
 use Illuminate\Support\Facades\Route;
@@ -11,6 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::get('/matches', [MatchController::class, 'index']);
 Route::get('/schedule', [MatchController::class, 'schedule']);
+Route::get('/groups/standings', [GroupController::class, 'standings']);
 Route::get('/matches/{match}', [MatchController::class, 'show']);
 Route::get('/matches/{match}/predictions', [MatchController::class, 'predictions']);
 

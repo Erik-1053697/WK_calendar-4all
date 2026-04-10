@@ -28,6 +28,9 @@ class DatabaseSeeder extends Seeder
             'is_admin' => true,
         ]);
 
-        $this->call(WorldCupMatchSeeder::class);
+        $this->call([
+            WorldCupMatchSeeder::class,
+            TeamAssetSeeder::class,
+        ]);
     }
 }

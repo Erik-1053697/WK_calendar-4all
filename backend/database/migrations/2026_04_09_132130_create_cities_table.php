@@ -8,18 +8,20 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('venues', function (Blueprint $table) {
+        Schema::create('cities', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('city_id')->constrained()->cascadeOnDelete();
-            $table->string('host_market')->unique();
-            $table->string('stadium_name');
+            $table->string('name');
+            $table->string('country');
+            $table->string('timezone_name')->nullable();
             $table->unsignedSmallInteger('display_order')->default(0);
             $table->timestamps();
+
+            $table->unique(['name', 'country']);
         });
     }
 
     public function down(): void
     {
-        Schema::dropIfExists('venues');
+        Schema::dropIfExists('cities');
     }
 };

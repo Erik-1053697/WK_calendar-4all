@@ -8,11 +8,10 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::create('venues', function (Blueprint $table) {
+        Schema::create('groups', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('city_id')->constrained()->cascadeOnDelete();
-            $table->string('host_market')->unique();
-            $table->string('stadium_name');
+            $table->string('code', 4)->unique();
+            $table->string('name')->unique();
             $table->unsignedSmallInteger('display_order')->default(0);
             $table->timestamps();
         });
@@ -20,6 +19,6 @@ return new class extends Migration
 
     public function down(): void
     {
-        Schema::dropIfExists('venues');
+        Schema::dropIfExists('groups');
     }
 };

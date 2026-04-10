@@ -33,6 +33,7 @@ class MatchController extends Controller
             ->values();
         $venues = Venue::query()
             ->whereIn('id', $venueIds)
+            ->with('city')
             ->orderBy('display_order')
             ->get();
 
@@ -50,7 +51,7 @@ class MatchController extends Controller
         $user = $request->user();
 
         $match->load([
-            'venue',
+            'venue.city',
             'predictions' => fn ($query) => $user
                 ? $query->where('user_id', $user->id)
                 : $query->whereRaw('1 = 0'),
@@ -94,7 +95,7 @@ class MatchController extends Controller
 
         return TournamentMatch::query()
             ->with([
-                'venue',
+                'venue.city',
                 'predictions' => fn ($query) => $user
                     ? $query->where('user_id', $user->id)
                     : $query->whereRaw('1 = 0'),
@@ -126,8 +127,10 @@ class MatchController extends Controller
                         ->orWhereHas('venue', function ($venueQuery) use ($term) {
                             $venueQuery
                                 ->where('host_market', 'like', $term)
-                                ->orWhere('city', 'like', $term)
                                 ->orWhere('stadium_name', 'like', $term);
+                        })
+                        ->orWhereHas('venue.city', function ($cityQuery) use ($term) {
+                            $cityQuery->where('name', 'like', $term);
                         });
                 })
             )

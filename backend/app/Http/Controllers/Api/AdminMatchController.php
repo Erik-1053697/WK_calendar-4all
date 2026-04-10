@@ -20,7 +20,7 @@ class AdminMatchController extends Controller
 
         $match = $this->predictionService->setMatchLock($match, true);
 
-        return new MatchResource($match->load('venue'));
+        return new MatchResource($match->load('venue.city'));
     }
 
     public function unlock(Request $request, TournamentMatch $match): MatchResource
@@ -29,6 +29,6 @@ class AdminMatchController extends Controller
 
         $match = $this->predictionService->setMatchLock($match, false);
 
-        return new MatchResource($match->load('venue'));
+        return new MatchResource($match->load('venue.city'));
     }
 }

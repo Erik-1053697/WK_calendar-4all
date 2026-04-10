@@ -1,39 +1,39 @@
 import clsx from 'clsx';
-import { formatMatchTime, formatStatusLabel } from '../../utils/formatters';
+import {
+  compactTeamLabel,
+  formatAmsterdamMatchTime,
+} from '../../utils/formatters';
 
 export default function MatchCard({ match, onSelect }) {
+  const kickoffReference = match.kickoff_at_utc || match.kickoff_at_local;
+  const homeSlot = match.home_team_slot || compactTeamLabel(match.home_team_name);
+  const awaySlot = match.away_team_slot || compactTeamLabel(match.away_team_name);
+
+  const tileTitle = [
+    `${match.home_team_name} vs ${match.away_team_name}`,
+    `${formatAmsterdamMatchTime(kickoffReference)} Amsterdam time`,
+    `${match.venue?.stadium_name}`,
+    `${match.venue?.host_market}`,
+    `${match.group_name || match.stage}`,
+  ]
+    .filter(Boolean)
+    .join(' | ');
+
   return (
     <button
       className={clsx('match-card', `is-${match.prediction_status}`)}
       onClick={() => onSelect(match)}
+      title={tileTitle}
       type="button"
     >
+      <div className="match-card__slots">
+        <strong>{homeSlot}</strong>
+        <span>/</span>
+        <strong>{awaySlot}</strong>
+      </div>
+
       <div className="match-card__meta">
-        <span>Match {match.fifa_match_number}</span>
-        <span>{formatMatchTime(match.kickoff_at_local, match.timezone_name)}</span>
-      </div>
-
-      <div className="match-card__teams">
-        <div className="match-card__team">
-          <span className="slot-badge">{match.home_team_slot}</span>
-          <strong>{match.home_team_name}</strong>
-        </div>
-        <div className="match-card__versus">vs</div>
-        <div className="match-card__team">
-          <span className="slot-badge">{match.away_team_slot}</span>
-          <strong>{match.away_team_name}</strong>
-        </div>
-      </div>
-
-      <div className="match-card__stage">{match.group_name || match.stage}</div>
-
-      <div className="match-card__footer">
-        <span>
-          {match.venue?.stadium_name}
-        </span>
-        <span className={clsx('status-pill', `status-${match.prediction_status}`)}>
-          {formatStatusLabel(match.prediction_status)}
-        </span>
+        <span>{formatAmsterdamMatchTime(kickoffReference)}</span>
       </div>
     </button>
   );

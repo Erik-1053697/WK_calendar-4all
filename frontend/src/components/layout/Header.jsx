@@ -20,8 +20,13 @@ export default function Header() {
       </div>
 
       <nav className="site-nav">
-        <NavLink to="/">Schedule</NavLink>
-        {isAuthenticated ? <NavLink to="/predictions">My Picks</NavLink> : null}
+        <NavLink end to="/">
+          Schedule
+        </NavLink>
+        <NavLink to="/groups">
+          Groups
+        </NavLink>
+        <NavLink to="/leaderboard">Leaderboard</NavLink>
       </nav>
 
       <div className="site-actions">
