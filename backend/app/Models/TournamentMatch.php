@@ -12,8 +12,10 @@ class TournamentMatch extends Model
     protected $table = 'matches';
 
     protected $fillable = [
+        'tournament_id',
         'fifa_match_number',
         'stage',
+        'round_label',
         'group_name',
         'group_id',
         'match_date',
@@ -37,6 +39,7 @@ class TournamentMatch extends Model
         'result_entered_by',
         'round_order',
         'match_order',
+        'matchday',
         'is_locked',
     ];
 
@@ -54,6 +57,11 @@ class TournamentMatch extends Model
     public function group(): BelongsTo
     {
         return $this->belongsTo(Group::class);
+    }
+
+    public function tournament(): BelongsTo
+    {
+        return $this->belongsTo(Tournament::class);
     }
 
     public function venue(): BelongsTo

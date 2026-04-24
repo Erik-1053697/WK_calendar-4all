@@ -17,7 +17,7 @@ class PredictionService
 
         if (Prediction::query()->where('user_id', $user->id)->where('match_id', $match->id)->exists()) {
             throw ValidationException::withMessages([
-                'prediction' => 'You already created a prediction for this match.',
+                'prediction' => 'Je hebt al een voorspelling voor deze wedstrijd gemaakt.',
             ]);
         }
 
@@ -51,6 +51,7 @@ class PredictionService
 
         $prediction->update([
             'locked_at' => Carbon::now(),
+            'is_locked' => true,
         ]);
 
         return $prediction->refresh();
@@ -67,7 +68,7 @@ class PredictionService
     {
         if ($prediction->user_id !== $user->id) {
             throw ValidationException::withMessages([
-                'prediction' => 'You are not allowed to modify this prediction.',
+                'prediction' => 'Je mag deze voorspelling niet aanpassen.',
             ]);
         }
     }
@@ -76,7 +77,7 @@ class PredictionService
     {
         if ($prediction->isLocked()) {
             throw ValidationException::withMessages([
-                'prediction' => 'This prediction has already been locked.',
+                'prediction' => 'Deze voorspelling is al vastgezet.',
             ]);
         }
     }
@@ -85,7 +86,7 @@ class PredictionService
     {
         if ($match->isClosed()) {
             throw ValidationException::withMessages([
-                'match' => 'Predictions are closed for this match.',
+                'match' => 'Voorspellingen zijn gesloten voor deze wedstrijd.',
             ]);
         }
     }

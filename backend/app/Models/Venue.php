@@ -9,11 +9,18 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class Venue extends Model
 {
     protected $fillable = [
+        'tournament_id',
         'city_id',
         'host_market',
         'stadium_name',
+        'capacity',
         'display_order',
     ];
+
+    public function tournament(): BelongsTo
+    {
+        return $this->belongsTo(Tournament::class);
+    }
 
     public function city(): BelongsTo
     {

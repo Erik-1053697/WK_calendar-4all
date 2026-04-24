@@ -23,9 +23,12 @@ class GroupStandingsResource extends JsonResource
                     'position' => $row['position'],
                     'team_id' => $row['team_id'],
                     'team_name' => $row['team_name'],
+                    'code' => $row['code'],
                     'fifa_code' => $row['fifa_code'],
                     'country_code' => $row['country_code'],
                     'image_url' => $row['image_url'],
+                    'flag_url' => $row['flag_url'],
+                    'confederation' => $row['confederation'],
                     'group_slot' => $row['group_slot'],
                     'played' => $row['played'],
                     'won' => $row['won'],
@@ -35,6 +38,7 @@ class GroupStandingsResource extends JsonResource
                     'goals_against' => $row['goals_against'],
                     'goal_difference' => $row['goal_difference'],
                     'points' => $row['points'],
+                    'qualification_status' => $row['qualification_status'],
                 ])
                 ->values(),
         ];

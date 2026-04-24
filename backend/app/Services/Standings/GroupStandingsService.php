@@ -27,9 +27,12 @@ class GroupStandingsService
                 $team->id => [
                     'team_id' => $team->id,
                     'team_name' => $team->name,
+                    'code' => $team->code,
                     'fifa_code' => $team->fifa_code,
                     'country_code' => $team->country_code,
                     'image_url' => $team->image_url,
+                    'flag_url' => $team->flag_url,
+                    'confederation' => $team->confederation,
                     'group_slot' => $team->group_slot,
                     'seed_order' => $index + 1,
                     'played' => 0,
@@ -40,6 +43,7 @@ class GroupStandingsService
                     'goals_against' => 0,
                     'goal_difference' => 0,
                     'points' => 0,
+                    'qualification_status' => 'undecided',
                 ],
             ]);
 
@@ -118,7 +122,12 @@ class GroupStandingsService
                 $standings = $standings->sortBy('seed_order')->values();
             }
 
-            $standings = $this->assignPositions($standings, $isRankedByPoints);
+            $standings = $this->assignPositions($standings, $isRankedByPoints)
+                ->map(function (array $row) use ($isRankedByPoints): array {
+                    $row['qualification_status'] = $this->qualificationStatus($row['position'], $isRankedByPoints);
+
+                    return $row;
+                });
 
             return [
                 'id' => $group->id,
@@ -167,5 +176,18 @@ class GroupStandingsService
 
             return $row;
         });
+    }
+
+    protected function qualificationStatus(int $position, bool $isRankedByPoints): string
+    {
+        if (! $isRankedByPoints) {
+            return 'undecided';
+        }
+
+        return match (true) {
+            $position <= 2 => 'qualified',
+            $position === 3 => 'possible',
+            default => 'eliminated',
+        };
     }
 }

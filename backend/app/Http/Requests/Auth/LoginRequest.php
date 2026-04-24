@@ -18,4 +18,13 @@ class LoginRequest extends FormRequest
             'password' => ['required', 'string'],
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'email.required' => 'Vul je e-mailadres in.',
+            'email.email' => 'Vul een geldig e-mailadres in.',
+            'password.required' => 'Vul je wachtwoord in.',
+        ];
+    }
 }

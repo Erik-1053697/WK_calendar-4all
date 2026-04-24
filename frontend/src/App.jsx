@@ -4,6 +4,7 @@ import ProtectedRoute from './components/ui/ProtectedRoute.jsx';
 import GroupsPage from './pages/GroupsPage.jsx';
 import LeaderboardPage from './pages/LeaderboardPage.jsx';
 import LoginPage from './pages/LoginPage.jsx';
+import OverviewPage from './pages/OverviewPage.jsx';
 import PredictionsPage from './pages/PredictionsPage.jsx';
 import RegisterPage from './pages/RegisterPage.jsx';
 import SchedulePage from './pages/SchedulePage.jsx';
@@ -12,7 +13,8 @@ export default function App() {
   return (
     <Routes>
       <Route element={<AppShell />}>
-        <Route index element={<SchedulePage />} />
+        <Route index element={<OverviewPage />} />
+        <Route path="/schedule" element={<SchedulePage />} />
         <Route path="/groups" element={<GroupsPage />} />
         <Route path="/leaderboard" element={<LeaderboardPage />} />
         <Route

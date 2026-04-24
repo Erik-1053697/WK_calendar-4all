@@ -16,8 +16,10 @@ class MatchResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'tournament_id' => $this->tournament_id,
             'fifa_match_number' => $this->fifa_match_number,
             'stage' => $this->stage,
+            'round_label' => $this->round_label,
             'group_name' => $this->group_name,
             'group_id' => $this->group_id,
             'match_date' => $this->match_date?->toDateString(),
@@ -34,7 +36,8 @@ class MatchResource extends JsonResource
             'home_team_slot' => $this->home_team_slot,
             'away_team_slot' => $this->away_team_slot,
             'venue' => $this->relationLoaded('venue') ? new VenueResource($this->venue) : null,
-            'status' => $this->status,
+            'status' => $this->presentationStatus(),
+            'raw_status' => $this->status,
             'home_score' => $this->home_score,
             'away_score' => $this->away_score,
             'home_points_awarded' => $this->home_points_awarded,
@@ -42,6 +45,7 @@ class MatchResource extends JsonResource
             'result_entered_at' => $this->result_entered_at?->toIso8601String(),
             'round_order' => $this->round_order,
             'match_order' => $this->match_order,
+            'matchday' => $this->matchday,
             'is_locked' => $this->is_locked,
             'is_closed' => $this->isClosed(),
             'prediction_status' => match (true) {
@@ -52,5 +56,24 @@ class MatchResource extends JsonResource
             },
             'my_prediction' => $prediction ? new PredictionResource($prediction) : null,
         ];
+    }
+
+    protected function presentationStatus(): string
+    {
+        if ($this->status === 'completed') {
+            return 'completed';
+        }
+
+        if ($this->status === 'live') {
+            return 'live';
+        }
+
+        $kickoff = $this->kickoff_at_utc ?? $this->kickoff_at_local;
+
+        if ($kickoff && $kickoff->isPast() && $kickoff->copy()->addHours(2)->isFuture()) {
+            return 'live';
+        }
+
+        return 'upcoming';
     }
 }

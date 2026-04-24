@@ -28,7 +28,7 @@ class AuthController extends Controller
     {
         if (! Auth::attempt($request->validated(), true)) {
             throw ValidationException::withMessages([
-                'email' => 'The provided credentials are incorrect.',
+                'email' => 'De ingevoerde inloggegevens zijn onjuist.',
             ]);
         }
 
@@ -45,7 +45,7 @@ class AuthController extends Controller
         $request->session()->regenerateToken();
 
         return response()->json([
-            'message' => 'Logged out successfully.',
+            'message' => 'Je bent succesvol uitgelogd.',
         ]);
     }
 

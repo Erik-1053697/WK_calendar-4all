@@ -1,7 +1,8 @@
 export const AMSTERDAM_TIME_ZONE = 'Europe/Amsterdam';
+export const DUTCH_LOCALE = 'nl-NL';
 
 export function formatBoardDate(dateString) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DUTCH_LOCALE, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -9,19 +10,19 @@ export function formatBoardDate(dateString) {
 }
 
 export function formatBoardWeekday(dateString) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DUTCH_LOCALE, {
     weekday: 'short',
   }).format(new Date(`${dateString}T12:00:00`));
 }
 
 export function formatBoardDay(dateString) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DUTCH_LOCALE, {
     day: 'numeric',
   }).format(new Date(`${dateString}T12:00:00`));
 }
 
 export function formatBoardMonth(dateString) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DUTCH_LOCALE, {
     month: 'short',
   }).format(new Date(`${dateString}T12:00:00`));
 }
@@ -40,7 +41,7 @@ export function formatAmsterdamMatchTime(dateTimeString) {
 }
 
 export function formatMatchDateTime(dateTimeString, timeZone) {
-  return new Intl.DateTimeFormat(undefined, {
+  return new Intl.DateTimeFormat(DUTCH_LOCALE, {
     weekday: 'short',
     month: 'short',
     day: 'numeric',
@@ -52,23 +53,23 @@ export function formatMatchDateTime(dateTimeString, timeZone) {
 
 export function formatStatusLabel(status) {
   return {
-    none: 'No pick',
-    draft: 'Saved',
-    locked: 'Locked',
-    closed: 'Closed',
+    none: 'Nog geen voorspelling',
+    draft: 'Opgeslagen',
+    locked: 'Vastgezet',
+    closed: 'Gesloten',
   }[status] ?? status;
 }
 
 export function abbreviateTeamName(name, maxLength = 18) {
   if (!name) {
-    return 'TBD';
+    return 'Nog niet bekend';
   }
 
   const replacements = [
-    [/^Winner Group /i, 'W '],
-    [/^Runner-up Group /i, 'RU '],
-    [/^Best third-place team/i, 'Best 3rd team'],
-    [/^Winner Match /i, 'W M'],
+    [/^Winner Group /i, 'Winnaar groep '],
+    [/^Runner-up Group /i, 'Nr. 2 groep '],
+    [/^Best third-place team/i, 'Beste nummer 3'],
+    [/^Winner Match /i, 'Winnaar W'],
   ];
 
   let value = name;
@@ -86,7 +87,7 @@ export function abbreviateTeamName(name, maxLength = 18) {
 
 export function compactTeamLabel(name) {
   if (!name) {
-    return 'TBD';
+    return 'NNB';
   }
 
   if (/^Winner Match /i.test(name)) {
@@ -128,26 +129,26 @@ export function compactTeamLabel(name) {
 
 export function formatStageRibbonLabel(stage) {
   return {
-    'Group Stage': 'Group Stage',
-    'Rest Day': 'Rest Days',
-    'Round of 32': 'Round of 32',
-    'Round of 16': 'Round of 16',
-    'Quarter-final': 'Quarter-finals',
-    'Semi-final': 'Semi-finals',
-    'Third-place': 'Third Place',
-    Final: 'Final',
+    'Group Stage': 'Groepsfase',
+    'Rest Day': 'Rustdagen',
+    'Round of 32': 'Laatste 32',
+    'Round of 16': 'Achtste finales',
+    'Quarter-final': 'Kwartfinales',
+    'Semi-final': 'Halve finales',
+    'Third-place': 'Troostfinale',
+    Final: 'Finale',
   }[stage] ?? stage;
 }
 
 export function shortenStageLabel(stage) {
   return {
-    'Group Stage': 'Groups',
+    'Group Stage': 'Groepen',
     'Round of 32': 'R32',
     'Round of 16': 'R16',
     'Quarter-final': 'QF',
     'Semi-final': 'SF',
-    'Third-place': '3P',
-    Final: 'Final',
+    'Third-place': '3e',
+    Final: 'Finale',
   }[stage] ?? stage;
 }
 

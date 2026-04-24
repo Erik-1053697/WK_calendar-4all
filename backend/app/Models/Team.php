@@ -11,11 +11,14 @@ class Team extends Model
     protected $fillable = [
         'group_id',
         'name',
+        'code',
         'fifa_code',
         'country_code',
         'group_slot',
         'display_order',
         'image_url',
+        'flag_url',
+        'confederation',
     ];
 
     public function group(): BelongsTo
@@ -36,5 +39,10 @@ class Team extends Model
     public function wonMatches(): HasMany
     {
         return $this->hasMany(TournamentMatch::class, 'winner_team_id');
+    }
+
+    public function standings(): HasMany
+    {
+        return $this->hasMany(Standing::class);
     }
 }

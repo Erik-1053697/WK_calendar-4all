@@ -13,6 +13,7 @@ class UserResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'email' => $this->email,
+            'avatar_url' => $this->avatar_url,
             'is_admin' => (bool) $this->is_admin,
             'created_at' => optional($this->created_at)?->toIso8601String(),
         ];

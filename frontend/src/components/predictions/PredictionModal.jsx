@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { displayTeamName, roundLabel } from '../../lib/domain';
 import { api } from '../../services/api';
 import { formatMatchDateTime, formatStatusLabel } from '../../utils/formatters';
 
@@ -69,13 +70,13 @@ export default function PredictionModal({
         : await api.post(endpoint, payload);
 
       setPrediction(response.data.data);
-      setMessage('Prediction saved. Lock it in when you are ready.');
+      setMessage('Voorspelling opgeslagen. Zet hem vast wanneer je zeker bent.');
       await onPredictionSaved(match.id);
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
           Object.values(requestError.response?.data?.errors || {}).flat().join(' ') ||
-          'Unable to save prediction.',
+          'Voorspelling opslaan is niet gelukt.',
       );
     } finally {
       setBusy(false);
@@ -90,13 +91,13 @@ export default function PredictionModal({
     try {
       const response = await api.post(`/matches/${match.id}/prediction/lock`);
       setPrediction(response.data.data);
-      setMessage('Prediction locked successfully.');
+      setMessage('Voorspelling is vastgezet.');
       await onPredictionSaved(match.id);
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
           Object.values(requestError.response?.data?.errors || {}).flat().join(' ') ||
-          'Unable to lock prediction.',
+          'Voorspelling vastzetten is niet gelukt.',
       );
     } finally {
       setBusy(false);
@@ -110,26 +111,26 @@ export default function PredictionModal({
         onClick={(event) => event.stopPropagation()}
         role="dialog"
         aria-modal="true"
-        aria-label="Prediction panel"
+        aria-label="Voorspellingspaneel"
       >
         <button className="modal-close" onClick={onClose} type="button">
-          Close
+          Sluiten
         </button>
 
-        <p className="eyebrow">{match.group_name || match.stage}</p>
-        <h3>Match {match.fifa_match_number}</h3>
+        <p className="eyebrow">{roundLabel(match.group_name || match.stage)}</p>
+        <h3>Wedstrijd {match.fifa_match_number}</h3>
         <p className="modal-meta">
           {formatMatchDateTime(match.kickoff_at_local, match.timezone_name)} · {match.venue?.host_market}
         </p>
         <div className="modal-matchup panel">
           <div>
             <span className="slot-badge">{match.home_team_slot}</span>
-            <strong>{match.home_team_name}</strong>
+            <strong>{displayTeamName(match.home_team_name)}</strong>
           </div>
           <div className="modal-matchup__divider">vs</div>
           <div>
             <span className="slot-badge">{match.away_team_slot}</span>
-            <strong>{match.away_team_name}</strong>
+            <strong>{displayTeamName(match.away_team_name)}</strong>
           </div>
         </div>
         <p className="muted">
@@ -138,8 +139,8 @@ export default function PredictionModal({
 
         {!isAuthenticated ? (
           <div className="empty-state">
-            <h4>Log in to make your pick</h4>
-            <p>You can explore the whole tournament board, but only signed-in users can submit predictions.</p>
+            <h4>Log in om je voorspelling te maken</h4>
+            <p>Je kunt het hele toernooi bekijken, maar alleen ingelogde gebruikers kunnen voorspellingen opslaan.</p>
           </div>
         ) : (
           <>
@@ -184,7 +185,7 @@ export default function PredictionModal({
                 onClick={savePrediction}
                 type="button"
               >
-                {prediction ? 'Update prediction' : 'Save prediction'}
+                {prediction ? 'Voorspelling bijwerken' : 'Voorspelling opslaan'}
               </button>
               <button
                 className="button"
@@ -197,7 +198,7 @@ export default function PredictionModal({
                 onClick={lockPrediction}
                 type="button"
               >
-                Lock in prediction
+                Voorspelling vastzetten
               </button>
             </div>
           </>
@@ -207,7 +208,7 @@ export default function PredictionModal({
         {error ? <p className="form-message error">{error}</p> : null}
         {readOnly ? (
           <p className="form-message info">
-            This match is closed. Locked picks are now read-only.
+            Deze wedstrijd is gesloten. Vastgezette voorspellingen zijn alleen-lezen.
           </p>
         ) : null}
         <p className="modal-status">
@@ -216,8 +217,8 @@ export default function PredictionModal({
 
         <section className="prediction-stats">
           <div className="prediction-stats__header">
-            <h4>Public pick trends</h4>
-            <span>{stats?.total_predictions ?? 0} total picks</span>
+            <h4>Populaire voorspellingen</h4>
+            <span>{stats?.total_predictions ?? 0} voorspellingen totaal</span>
           </div>
 
           {stats?.score_breakdown?.length ? (
@@ -232,7 +233,7 @@ export default function PredictionModal({
               ))}
             </ul>
           ) : (
-            <p className="muted">No public predictions yet for this match.</p>
+            <p className="muted">Er zijn nog geen openbare voorspellingen voor deze wedstrijd.</p>
           )}
         </section>
       </aside>

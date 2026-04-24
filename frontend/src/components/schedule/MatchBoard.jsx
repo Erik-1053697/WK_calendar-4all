@@ -106,7 +106,7 @@ export default function MatchBoard({ matches, onSelect }) {
         >
           <div className="schedule-axis-corner">
             <p className="eyebrow">Amsterdam</p>
-            <strong>Date</strong>
+            <strong>Datum</strong>
           </div>
 
           {TIME_SLOTS.map((hour) => (

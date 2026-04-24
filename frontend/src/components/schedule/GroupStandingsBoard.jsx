@@ -1,3 +1,5 @@
+import { displayTeamName } from '../../lib/domain';
+
 export default function GroupStandingsBoard({ groups }) {
   if (!groups.length) {
     return null;
@@ -35,10 +37,10 @@ export default function GroupStandingsBoard({ groups }) {
     <section className="group-standings">
       <div className="group-standings__header">
         <div>
-          <p className="eyebrow">Group Tables</p>
-          <h2>Current group standings</h2>
+          <p className="eyebrow">Groepstabellen</p>
+          <h2>Actuele groepsstanden</h2>
         </div>
-        <p className="muted">Before results, every team shares 1st place. After that, rankings sort by points, and tied teams share the same place.</p>
+        <p className="muted">Zonder uitslagen deelt elk team de eerste plek. Daarna sorteren we op punten en delen teams met gelijke punten dezelfde positie.</p>
       </div>
 
       <div className="group-standings__grid">
@@ -47,11 +49,11 @@ export default function GroupStandingsBoard({ groups }) {
             <div className="group-card__topbar">
               <span className="group-card__label">Groep {group.code}</span>
               <span className={`group-card__state ${group.is_ranked_by_points ? 'is-live' : ''}`}>
-                {group.is_ranked_by_points ? 'Live' : 'Start'}
+                {group.is_ranked_by_points ? 'Live' : 'Begin'}
               </span>
             </div>
             <p className="group-card__note">
-              {group.is_ranked_by_points ? 'Ranking by points. Teams on the same points share the same place.' : 'No results yet. Every team currently shares 1st place.'}
+              {group.is_ranked_by_points ? 'Rangschikking op punten. Teams met hetzelfde puntenaantal delen dezelfde plek.' : 'Nog geen uitslagen. Elk team deelt nu de eerste plek.'}
             </p>
 
             <div className="group-table">
@@ -65,22 +67,22 @@ export default function GroupStandingsBoard({ groups }) {
                     <div className="group-item__identity">
                       <span className="group-item__flag">
                         {team.image_url ? (
-                          <img src={team.image_url} alt={`${team.team_name} flag`} loading="lazy" />
+                          <img src={team.image_url} alt={`Vlag van ${team.team_name}`} loading="lazy" />
                         ) : (
                           <span className="group-item__flag-fallback">{(team.fifa_code || '?').slice(0, 2)}</span>
                         )}
                       </span>
 
                       <div className="group-item__copy">
-                        <strong>{team.team_name}</strong>
-                        <span>{teamMeta(team) || 'TBD'}</span>
+                        <strong>{displayTeamName(team.team_name)}</strong>
+                        <span>{teamMeta(team) || 'NNB'}</span>
                       </div>
                     </div>
                   </div>
 
                   <div className="group-item__bottom">
                     <span className="group-item__chip group-item__chip--slot">
-                      {team.group_slot || team.fifa_code || 'TBD'}
+                      {team.group_slot || team.fifa_code || 'NNB'}
                     </span>
 
                     <span className="group-item__chip">
@@ -94,7 +96,7 @@ export default function GroupStandingsBoard({ groups }) {
                     </span>
 
                     <span className={`group-item__chip group-item__chip--points ${pointsClass(team.points)}`}>
-                      <small>Points</small>
+                      <small>Punten</small>
                       <strong>{team.points}</strong>
                     </span>
                   </div>

@@ -6,7 +6,8 @@
     "notes": [
       "Match dates and kick-off times were extracted from FIFA's official FWC26 match schedule PDF.",
       "The official PDF publishes kick-off times in Eastern Time (ET).",
-      "Local kick-off dates/times were derived by converting the official ET kickoff to each host venue timezone."
+      "Local kick-off dates/times in this file were derived by converting the official ET kickoff to each host venue timezone.",
+      "Laravel seeders normalize every match to Europe/Amsterdam for match_date, kickoff_at_local and timezone_name while preserving kickoff_at_utc."
     ]
   },
   "venues": [

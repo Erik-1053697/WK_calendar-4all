@@ -21,12 +21,12 @@ export default function RegisterPage() {
 
     try {
       await register(form);
-      navigate('/');
+      navigate('/predictions');
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
           Object.values(requestError.response?.data?.errors || {}).flat().join(' ') ||
-          'Unable to register.',
+          'Registreren is niet gelukt.',
       );
     } finally {
       setBusy(false);
@@ -36,11 +36,11 @@ export default function RegisterPage() {
   return (
     <section className="auth-page">
       <form className="auth-card panel" onSubmit={handleSubmit}>
-        <p className="eyebrow">Create account</p>
-        <h1>Start predicting the 2026 tournament</h1>
+        <p className="eyebrow">Account aanmaken</p>
+        <h1>Start met voorspellen voor het toernooi van 2026</h1>
 
         <label>
-          <span>Name</span>
+          <span>Naam</span>
           <input
             value={form.name}
             onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
@@ -49,7 +49,7 @@ export default function RegisterPage() {
         </label>
 
         <label>
-          <span>Email</span>
+          <span>E-mail</span>
           <input
             type="email"
             value={form.email}
@@ -59,7 +59,7 @@ export default function RegisterPage() {
         </label>
 
         <label>
-          <span>Password</span>
+          <span>Wachtwoord</span>
           <input
             type="password"
             value={form.password}
@@ -69,7 +69,7 @@ export default function RegisterPage() {
         </label>
 
         <label>
-          <span>Confirm password</span>
+          <span>Bevestig wachtwoord</span>
           <input
             type="password"
             value={form.password_confirmation}
@@ -86,11 +86,11 @@ export default function RegisterPage() {
         {error ? <p className="form-message error">{error}</p> : null}
 
         <button className="button" disabled={busy} type="submit">
-          {busy ? 'Creating account...' : 'Register'}
+          {busy ? 'Account aanmaken...' : 'Registreren'}
         </button>
 
         <p className="muted">
-          Already have an account? <Link to="/login">Log in</Link>
+          Heb je al een account? <Link to="/login">Inloggen</Link>
         </p>
       </form>
     </section>

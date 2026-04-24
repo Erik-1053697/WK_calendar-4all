@@ -1,99 +1,160 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { api } from '../services/api';
-import { formatMatchDateTime, formatStatusLabel } from '../utils/formatters';
+import PredictionLeaderboard from '../components/leaderboard/PredictionLeaderboard';
+import TeamMatchup from '../components/matches/TeamMatchup';
+import MetricCard from '../components/ui/MetricCard';
+import PageHeader from '../components/ui/PageHeader';
+import StatusBadge from '../components/ui/StatusBadge';
+import { displayTeamName, formatAmsterdamDate, formatAmsterdamTime, isPredictable, matchKickoff } from '../lib/domain';
+import { getPredictionDashboard, lockPrediction, savePrediction } from '../services/tournamentApi';
+
+function PredictionCard({ match, onSaved }) {
+  const existing = match.my_prediction;
+  const [form, setForm] = useState({
+    predicted_home_score: existing?.predicted_home_score ?? 0,
+    predicted_away_score: existing?.predicted_away_score ?? 0,
+  });
+  const [busy, setBusy] = useState(false);
+  const [message, setMessage] = useState('');
+  const locked = existing?.is_locked || !isPredictable(match);
+
+  async function handleSave() {
+    setBusy(true);
+    setMessage('');
+
+    try {
+      await savePrediction(match.id, {
+        predicted_home_score: Number(form.predicted_home_score),
+        predicted_away_score: Number(form.predicted_away_score),
+      }, Boolean(existing));
+      setMessage('Opgeslagen');
+      await onSaved();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function handleLock() {
+    setBusy(true);
+    setMessage('');
+
+    try {
+      await lockPrediction(match.id);
+      setMessage('Vastgezet');
+      await onSaved();
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <article className="prediction-card">
+      <div className="prediction-card__meta">
+        <span>Wedstrijd {match.fifa_match_number}</span>
+        <StatusBadge status={match.prediction_status} />
+      </div>
+      <TeamMatchup match={match} />
+      <p>{formatAmsterdamDate(matchKickoff(match))} · {formatAmsterdamTime(matchKickoff(match))} Amsterdam · {match.venue?.host_market}</p>
+
+      <div className="prediction-score-form">
+        <label>
+          <span>{match.home_team_slot || 'Thuis'}</span>
+          <input disabled={locked || busy} min="0" type="number" value={form.predicted_home_score} onChange={(event) => setForm((current) => ({ ...current, predicted_home_score: event.target.value }))} />
+        </label>
+        <strong>-</strong>
+        <label>
+          <span>{match.away_team_slot || 'Uit'}</span>
+          <input disabled={locked || busy} min="0" type="number" value={form.predicted_away_score} onChange={(event) => setForm((current) => ({ ...current, predicted_away_score: event.target.value }))} />
+        </label>
+      </div>
+
+      <div className="prediction-actions">
+        <button disabled={locked || busy} onClick={handleSave} type="button">Opslaan</button>
+        <button disabled={locked || busy || !existing} onClick={handleLock} type="button">Vastzetten</button>
+        {message ? <span>{message}</span> : null}
+      </div>
+    </article>
+  );
+}
 
 export default function PredictionsPage() {
-  const [matches, setMatches] = useState([]);
+  const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  useEffect(() => {
-    loadPredictions();
-  }, []);
-
-  async function loadPredictions() {
+  async function loadDashboard() {
     setLoading(true);
     setError('');
 
     try {
-      const response = await api.get('/matches');
-      setMatches(response.data.data.filter((match) => match.my_prediction));
+      setDashboard(await getPredictionDashboard());
     } catch (requestError) {
-      setError('Unable to load your predictions right now.');
+      setError('We konden je voorspellingen niet laden.');
       console.error(requestError);
     } finally {
       setLoading(false);
     }
   }
 
-  const totals = useMemo(
-    () => ({
-      total: matches.length,
-      locked: matches.filter((match) => match.my_prediction?.is_locked).length,
-    }),
-    [matches],
-  );
+  useEffect(() => {
+    loadDashboard();
+  }, []);
+
+  const stats = dashboard?.stats;
+  const upcomingMatches = useMemo(() => dashboard?.upcoming_matches || [], [dashboard]);
 
   return (
-    <section className="page-stack">
-      <div className="page-heading">
-        <div>
-          <p className="eyebrow">Profile</p>
-          <h1>My predictions</h1>
-          <p className="lead">Track every saved pick and see which ones are already locked.</p>
-        </div>
-        <div className="hero-summary panel compact">
-          <div>
-            <span>Total picks</span>
-            <strong>{totals.total}</strong>
-          </div>
-          <div>
-            <span>Locked</span>
-            <strong>{totals.locked}</strong>
-          </div>
-        </div>
-      </div>
+    <section className="screen-stack">
+      <PageHeader
+        eyebrow="Voorspellingen"
+        title="Voorspellingsarena"
+        subtitle="Vul scores in voor de aftrap, zet voorspellingen vast en volg je prestaties in de ranglijst."
+      />
 
-      {loading ? <div className="panel loading-panel">Loading your picks...</div> : null}
-      {error ? <div className="panel form-message error">{error}</div> : null}
+      {loading ? <div className="loading-shell">Voorspellingen laden...</div> : null}
+      {error ? <div className="empty-card">{error}</div> : null}
 
-      {!loading && !error && matches.length === 0 ? (
-        <div className="panel empty-state">
-          <h3>No predictions yet</h3>
-          <p>
-            Visit the <Link to="/">schedule board</Link> and click a match tile to make your first pick.
-          </p>
-        </div>
-      ) : null}
+      {!loading && !error && dashboard ? (
+        <>
+          <section className="metric-grid">
+            <MetricCard label="Punten" value={stats.total_points} detail={`Positie #${stats.rank}`} tone="gold" />
+            <MetricCard label="Nauwkeurigheid" value={`${stats.accuracy}%`} detail="Juiste uitkomsten" tone="blue" />
+            <MetricCard label="Exacte scores" value={stats.exact_scores} detail="Perfect voorspeld" />
+            <MetricCard label="Vastgezet" value={stats.locked_predictions} detail={`${stats.predictions_count} voorspellingen totaal`} />
+          </section>
 
-      {!loading && !error && matches.length > 0 ? (
-        <div className="prediction-list">
-          {matches.map((match) => (
-            <article className="prediction-list__item panel" key={match.id}>
-              <div>
-                <p className="eyebrow">{match.group_name || match.stage}</p>
-                <h3>Match {match.fifa_match_number}</h3>
-                <p className="muted">
-                  {match.home_team_slot} {match.home_team_name} vs {match.away_team_slot} {match.away_team_name}
-                </p>
-                <p className="muted">
-                  {formatMatchDateTime(match.kickoff_at_local, match.timezone_name)} · {match.venue?.host_market}
-                </p>
+          <section className="predictions-layout">
+            <div className="panel-shell">
+              <header className="section-title">
+                <div>
+                  <span className="eyebrow">Komende wedstrijden</span>
+                  <h2>Maak je voorspellingen</h2>
+                </div>
+                <small>{upcomingMatches.length} open wedstrijden</small>
+              </header>
+              <div className="prediction-grid">
+                {upcomingMatches.map((match) => (
+                  <PredictionCard key={match.id} match={match} onSaved={loadDashboard} />
+                ))}
               </div>
+            </div>
 
-              <div className="prediction-score">
-                <span>{match.my_prediction.predicted_home_score}</span>
-                <strong>-</strong>
-                <span>{match.my_prediction.predicted_away_score}</span>
-              </div>
-
-              <span className={`status-pill status-${match.prediction_status}`}>
-                {formatStatusLabel(match.prediction_status)}
-              </span>
-            </article>
-          ))}
-        </div>
+            <aside className="prediction-side">
+              <PredictionLeaderboard entries={dashboard.community_leaderboard} compact />
+              <article className="panel-shell history-panel">
+                <header className="section-title">
+                  <h3>Recente voorspellingen</h3>
+                </header>
+                {dashboard.recent_predictions.length ? dashboard.recent_predictions.map((match) => (
+                  <div className="history-row" key={match.id}>
+                    <span>Wedstrijd {match.fifa_match_number}</span>
+                    <strong>{match.my_prediction?.predicted_home_score} - {match.my_prediction?.predicted_away_score}</strong>
+                    <small>{displayTeamName(match.home_team_name)} vs {displayTeamName(match.away_team_name)}</small>
+                  </div>
+                )) : <p className="muted">Je hebt nog geen voorspellingen opgeslagen.</p>}
+              </article>
+            </aside>
+          </section>
+        </>
       ) : null}
     </section>
   );

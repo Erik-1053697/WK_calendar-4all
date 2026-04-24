@@ -5,35 +5,47 @@ export default function MatchFilters({
   onChange,
   onReset,
 }) {
+  function stageLabel(stage) {
+    return {
+      'Group Stage': 'Groepsfase',
+      'Round of 32': 'Laatste 32',
+      'Round of 16': 'Achtste finales',
+      'Quarter-final': 'Kwartfinale',
+      'Semi-final': 'Halve finale',
+      'Third-place': 'Troostfinale',
+      Final: 'Finale',
+    }[stage] ?? stage;
+  }
+
   return (
     <section className="filter-bar panel">
       <div className="filter-grid">
         <label>
-          <span>Search</span>
+          <span>Zoeken</span>
           <input
             name="search"
-            placeholder="Team, city, stage..."
+            placeholder="Team, stad, ronde..."
             value={filters.search}
             onChange={onChange}
           />
         </label>
 
         <label>
-          <span>Stage</span>
+          <span>Ronde</span>
           <select name="stage" value={filters.stage} onChange={onChange}>
-            <option value="">All stages</option>
+            <option value="">Alle rondes</option>
             {stages.map((stage) => (
               <option key={stage} value={stage}>
-                {stage}
+                {stageLabel(stage)}
               </option>
             ))}
           </select>
         </label>
 
         <label>
-          <span>Host market</span>
+          <span>Speelstad</span>
           <select name="city" value={filters.city} onChange={onChange}>
-            <option value="">All host markets</option>
+            <option value="">Alle speelsteden</option>
             {cities.map((city) => (
               <option key={city} value={city}>
                 {city}
@@ -44,7 +56,7 @@ export default function MatchFilters({
       </div>
 
       <button className="button button-ghost" onClick={onReset} type="button">
-        Reset filters
+        Filters resetten
       </button>
     </section>
   );

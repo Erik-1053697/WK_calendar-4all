@@ -17,12 +17,12 @@ export default function LoginPage() {
 
     try {
       await login(form);
-      navigate(location.state?.from?.pathname || '/');
+      navigate(location.state?.from?.pathname || '/predictions');
     } catch (requestError) {
       setError(
         requestError.response?.data?.message ||
           Object.values(requestError.response?.data?.errors || {}).flat().join(' ') ||
-          'Unable to log in.',
+          'Inloggen is niet gelukt.',
       );
     } finally {
       setBusy(false);
@@ -32,11 +32,11 @@ export default function LoginPage() {
   return (
     <section className="auth-page">
       <form className="auth-card panel" onSubmit={handleSubmit}>
-        <p className="eyebrow">Welcome back</p>
-        <h1>Log in to save your picks</h1>
+        <p className="eyebrow">Welkom terug</p>
+        <h1>Log in om je voorspellingen op te slaan</h1>
 
         <label>
-          <span>Email</span>
+          <span>E-mail</span>
           <input
             type="email"
             value={form.email}
@@ -46,7 +46,7 @@ export default function LoginPage() {
         </label>
 
         <label>
-          <span>Password</span>
+          <span>Wachtwoord</span>
           <input
             type="password"
             value={form.password}
@@ -58,11 +58,11 @@ export default function LoginPage() {
         {error ? <p className="form-message error">{error}</p> : null}
 
         <button className="button" disabled={busy} type="submit">
-          {busy ? 'Logging in...' : 'Log in'}
+          {busy ? 'Inloggen...' : 'Inloggen'}
         </button>
 
         <p className="muted">
-          No account yet? <Link to="/register">Create one</Link>
+          Nog geen account? <Link to="/register">Maak een account aan</Link>
         </p>
       </form>
     </section>

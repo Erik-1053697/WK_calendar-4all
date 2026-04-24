@@ -6,7 +6,7 @@ export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div className="panel loading-panel">Checking your session...</div>;
+    return <div className="panel loading-panel">Sessie controleren...</div>;
   }
 
   if (!isAuthenticated) {

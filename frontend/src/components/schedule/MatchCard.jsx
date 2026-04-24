@@ -1,7 +1,9 @@
 import clsx from 'clsx';
+import { displayTeamName } from '../../lib/domain';
 import {
   compactTeamLabel,
   formatAmsterdamMatchTime,
+  formatStageRibbonLabel,
 } from '../../utils/formatters';
 
 export default function MatchCard({ match, onSelect }) {
@@ -10,11 +12,11 @@ export default function MatchCard({ match, onSelect }) {
   const awaySlot = match.away_team_slot || compactTeamLabel(match.away_team_name);
 
   const tileTitle = [
-    `${match.home_team_name} vs ${match.away_team_name}`,
-    `${formatAmsterdamMatchTime(kickoffReference)} Amsterdam time`,
+    `${displayTeamName(match.home_team_name)} vs ${displayTeamName(match.away_team_name)}`,
+    `${formatAmsterdamMatchTime(kickoffReference)} Amsterdamse tijd`,
     `${match.venue?.stadium_name}`,
     `${match.venue?.host_market}`,
-    `${match.group_name || match.stage}`,
+    `${match.group_name?.replace(/^Group /i, 'Groep ') || formatStageRibbonLabel(match.stage)}`,
   ]
     .filter(Boolean)
     .join(' | ');

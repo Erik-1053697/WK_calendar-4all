@@ -12,38 +12,45 @@ export default function Header() {
 
   return (
     <header className="site-header">
-      <div>
-        <p className="site-kicker">FIFA World Cup 2026</p>
-        <NavLink className="site-title" to="/">
-          World Cup Planner
-        </NavLink>
+      <div className="site-brand">
+        <span className="site-brand-mark" aria-hidden="true">WC</span>
+        <div>
+          <p className="site-kicker">Prof-IT4all toernooiplatform</p>
+          <NavLink className="site-title" to="/">
+            Wereldkampioenschap 2026
+          </NavLink>
+        </div>
       </div>
 
       <nav className="site-nav">
         <NavLink end to="/">
-          Schedule
+          Overzicht
+        </NavLink>
+        <NavLink to="/schedule">
+          Schema
         </NavLink>
         <NavLink to="/groups">
-          Groups
+          Groepen
         </NavLink>
-        <NavLink to="/leaderboard">Leaderboard</NavLink>
+        <NavLink to="/leaderboard">Ranglijst</NavLink>
+        <NavLink to="/predictions">Voorspellingen</NavLink>
       </nav>
 
       <div className="site-actions">
         {isAuthenticated ? (
           <>
-            <span className="welcome-pill">Hi, {user.name}</span>
+            <span className="welcome-pill">Hallo, {user.name}</span>
             <button className="button button-ghost" onClick={handleLogout}>
-              Log out
+              Uitloggen
             </button>
           </>
         ) : (
           <>
             <NavLink className="button button-ghost" to="/login">
-              Log in
+              Inloggen
             </NavLink>
             <NavLink className="button" to="/register">
-              Register
+              Registreren
             </NavLink>
           </>
         )}

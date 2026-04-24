@@ -13,13 +13,16 @@ class Prediction extends Model
         'match_id',
         'predicted_home_score',
         'predicted_away_score',
+        'points_awarded',
         'locked_at',
+        'is_locked',
     ];
 
     protected function casts(): array
     {
         return [
             'locked_at' => 'datetime',
+            'is_locked' => 'boolean',
         ];
     }
 
@@ -37,7 +40,7 @@ class Prediction extends Model
 
                 if ($prediction->isDirty($protectedFields)) {
                     throw ValidationException::withMessages([
-                        'prediction' => 'Locked predictions cannot be modified.',
+                        'prediction' => 'Vastgezette voorspellingen kunnen niet worden aangepast.',
                     ]);
                 }
             }
@@ -56,6 +59,6 @@ class Prediction extends Model
 
     public function isLocked(): bool
     {
-        return $this->locked_at !== null;
+        return $this->is_locked || $this->locked_at !== null;
     }
 }
