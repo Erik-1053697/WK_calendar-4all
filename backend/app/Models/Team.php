@@ -45,4 +45,14 @@ class Team extends Model
     {
         return $this->hasMany(Standing::class);
     }
+
+    public function tournamentWinnerSelections(): HasMany
+    {
+        return $this->hasMany(TournamentWinnerPrediction::class, 'predicted_team_id');
+    }
+
+    public function groupWinnerSelections(): HasMany
+    {
+        return $this->hasMany(GroupWinnerPrediction::class, 'predicted_team_id');
+    }
 }

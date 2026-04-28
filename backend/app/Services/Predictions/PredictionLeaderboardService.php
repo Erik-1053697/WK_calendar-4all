@@ -13,15 +13,17 @@ class PredictionLeaderboardService
     {
     }
 
-    public function rows(?Tournament $tournament = null): Collection
+    public function rows(?Tournament $tournament = null, ?array $userIds = null): Collection
     {
         $predictions = Prediction::query()
             ->with(['user', 'match'])
+            ->when($userIds !== null, fn ($query) => $query->whereIn('user_id', $userIds))
             ->when($tournament, fn ($query) => $query->whereHas('match', fn ($matchQuery) => $matchQuery->where('tournament_id', $tournament->id)))
             ->get()
             ->groupBy('user_id');
 
         $users = User::query()
+            ->when($userIds !== null, fn ($query) => $query->whereIn('id', $userIds))
             ->orderBy('name')
             ->get();
 

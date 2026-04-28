@@ -202,3 +202,63 @@ export function uniqueStages(matches) {
 export function isPredictable(match) {
   return match.status === 'upcoming' && !match.is_closed;
 }
+
+export function formatDaysUntilLock(days) {
+  if (days <= 0) {
+    return 'Sluit vandaag';
+  }
+
+  return `Nog ${days} ${days === 1 ? 'dag' : 'dagen'}`;
+}
+
+export function formatLockCountdown(totalSeconds) {
+  const safeSeconds = Math.max(0, totalSeconds || 0);
+  const days = Math.floor(safeSeconds / 86400);
+  const hours = Math.floor((safeSeconds % 86400) / 3600);
+  const minutes = Math.floor((safeSeconds % 3600) / 60);
+  const seconds = safeSeconds % 60;
+
+  const segments = [
+    String(hours).padStart(2, '0'),
+    String(minutes).padStart(2, '0'),
+    String(seconds).padStart(2, '0'),
+  ];
+
+  if (days > 0) {
+    segments.unshift(String(days).padStart(2, '0'));
+  }
+
+  return segments.join(':');
+}
+
+export function getPredictionWindowState(predictionWindow, now = Date.now()) {
+  if (!predictionWindow?.lock_at) {
+    return {
+      isLocked: Boolean(predictionWindow?.is_locked),
+      daysLabel: 'Nog niet bekend',
+      countdownLabel: null,
+      lockAtLabel: 'Nog niet bekend',
+    };
+  }
+
+  const lockAt = new Date(predictionWindow.lock_at);
+  const secondsUntilLock = Math.max(0, Math.floor((lockAt.getTime() - now) / 1000));
+  const isLocked = predictionWindow.is_locked || secondsUntilLock <= 0;
+
+  return {
+    isLocked,
+    daysLabel: isLocked ? 'Vergrendeld' : formatDaysUntilLock(Math.ceil(secondsUntilLock / 86400)),
+    countdownLabel: !isLocked && secondsUntilLock <= 72 * 3600 ? formatLockCountdown(secondsUntilLock) : null,
+    lockAtLabel: formatAmsterdamDateTime(predictionWindow.lock_at, {
+      day: '2-digit',
+      month: 'short',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    }),
+  };
+}
+
+export function teamFlagUrl(team) {
+  return team?.flag_url || team?.image_url || null;
+}

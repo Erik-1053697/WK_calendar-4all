@@ -6,6 +6,7 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -28,6 +29,28 @@ class User extends Authenticatable
     public function predictions(): HasMany
     {
         return $this->hasMany(Prediction::class);
+    }
+
+    public function ownedPredictionGroups(): HasMany
+    {
+        return $this->hasMany(PredictionGroup::class, 'owner_user_id');
+    }
+
+    public function predictionGroups(): BelongsToMany
+    {
+        return $this->belongsToMany(PredictionGroup::class, 'prediction_group_members')
+            ->withPivot('role')
+            ->withTimestamps();
+    }
+
+    public function tournamentWinnerPredictions(): HasMany
+    {
+        return $this->hasMany(TournamentWinnerPrediction::class);
+    }
+
+    public function groupWinnerPredictions(): HasMany
+    {
+        return $this->hasMany(GroupWinnerPrediction::class);
     }
 
     public function leaderboardEntries(): HasMany

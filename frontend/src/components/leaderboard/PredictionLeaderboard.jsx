@@ -1,10 +1,16 @@
-export default function PredictionLeaderboard({ entries = [], compact = false }) {
+export default function PredictionLeaderboard({
+  entries = [],
+  compact = false,
+  eyebrow = 'Voorspellersranglijst',
+  title = 'Algemene ranglijst',
+  emptyMessage = 'Er staan nog geen spelers in de ranglijst.',
+}) {
   return (
     <article className={`leaderboard-panel${compact ? ' leaderboard-panel--compact' : ''}`}>
       <header>
         <div>
-          <span className="eyebrow">Voorspellersranglijst</span>
-          <h3>Algemene ranglijst</h3>
+          <span className="eyebrow">{eyebrow}</span>
+          <h3>{title}</h3>
         </div>
       </header>
 
@@ -18,7 +24,7 @@ export default function PredictionLeaderboard({ entries = [], compact = false })
             </div>
             <strong>{entry.total_points}</strong>
           </div>
-        )) : <p className="muted">Er staan nog geen spelers in de ranglijst.</p>}
+        )) : <p className="muted">{emptyMessage}</p>}
       </div>
     </article>
   );

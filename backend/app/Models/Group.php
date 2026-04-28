@@ -40,4 +40,9 @@ class Group extends Model
     {
         return $this->hasMany(Standing::class);
     }
+
+    public function winnerPredictions(): HasMany
+    {
+        return $this->hasMany(GroupWinnerPrediction::class);
+    }
 }

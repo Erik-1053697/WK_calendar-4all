@@ -6,8 +6,10 @@ use App\Http\Controllers\Api\GroupController;
 use App\Http\Controllers\Api\LeaderboardController;
 use App\Http\Controllers\Api\MatchController;
 use App\Http\Controllers\Api\OverviewController;
+use App\Http\Controllers\Api\PredictionGroupController;
 use App\Http\Controllers\Api\PredictionDashboardController;
 use App\Http\Controllers\Api\PredictionController;
+use App\Http\Controllers\Api\SpecialPredictionController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [AuthController::class, 'register']);
@@ -30,6 +32,12 @@ Route::middleware('auth:sanctum')->group(function (): void {
     Route::put('/matches/{match}/prediction', [PredictionController::class, 'update']);
     Route::post('/matches/{match}/prediction/lock', [PredictionController::class, 'lock']);
     Route::get('/predictions/dashboard', PredictionDashboardController::class);
+    Route::get('/prediction-groups', [PredictionGroupController::class, 'index']);
+    Route::post('/prediction-groups/join', [PredictionGroupController::class, 'join']);
+    Route::post('/prediction-groups', [PredictionGroupController::class, 'store']);
+    Route::get('/prediction-groups/{predictionGroup}', [PredictionGroupController::class, 'show'])->whereNumber('predictionGroup');
+    Route::put('/tournaments/{tournament}/winner-prediction', [SpecialPredictionController::class, 'saveTournamentWinner']);
+    Route::put('/tournaments/{tournament}/group-winner-predictions', [SpecialPredictionController::class, 'saveGroupWinners']);
 
     Route::prefix('admin')->group(function (): void {
         Route::put('/matches/{match}/lock', [AdminMatchController::class, 'lock']);

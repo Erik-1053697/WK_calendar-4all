@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import PredictionGroupsWorkspace from '../components/leaderboard/PredictionGroupsWorkspace';
 import PredictionLeaderboard from '../components/leaderboard/PredictionLeaderboard';
 import MetricCard from '../components/ui/MetricCard';
 import PageHeader from '../components/ui/PageHeader';
@@ -70,6 +71,8 @@ export default function LeaderboardPage() {
               </p>
             </article>
           </section>
+
+          <PredictionGroupsWorkspace />
         </>
       ) : null}
     </section>

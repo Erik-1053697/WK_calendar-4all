@@ -3,9 +3,10 @@
 namespace App\Http\Resources;
 
 use App\Models\Prediction;
-use Illuminate\Support\Carbon;
+use App\Services\Predictions\PredictionWindowService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Carbon;
 
 class MatchResource extends JsonResource
 {
@@ -13,6 +14,7 @@ class MatchResource extends JsonResource
     {
         /** @var Prediction|null $prediction */
         $prediction = $this->relationLoaded('predictions') ? $this->predictions->first() : null;
+        $window = app(PredictionWindowService::class)->matchWindow($this->resource);
 
         return [
             'id' => $this->id,
@@ -33,6 +35,10 @@ class MatchResource extends JsonResource
             'winner_team_id' => $this->winner_team_id,
             'home_team_name' => $this->home_team_name,
             'away_team_name' => $this->away_team_name,
+            'home_team_flag_url' => $this->relationLoaded('homeTeam') ? ($this->homeTeam?->flag_url ?: $this->homeTeam?->image_url) : null,
+            'away_team_flag_url' => $this->relationLoaded('awayTeam') ? ($this->awayTeam?->flag_url ?: $this->awayTeam?->image_url) : null,
+            'home_team_code' => $this->relationLoaded('homeTeam') ? ($this->homeTeam?->fifa_code ?: $this->homeTeam?->code) : null,
+            'away_team_code' => $this->relationLoaded('awayTeam') ? ($this->awayTeam?->fifa_code ?: $this->awayTeam?->code) : null,
             'home_team_slot' => $this->home_team_slot,
             'away_team_slot' => $this->away_team_slot,
             'venue' => $this->relationLoaded('venue') ? new VenueResource($this->venue) : null,
@@ -48,6 +54,7 @@ class MatchResource extends JsonResource
             'matchday' => $this->matchday,
             'is_locked' => $this->is_locked,
             'is_closed' => $this->isClosed(),
+            'prediction_window' => $window,
             'prediction_status' => match (true) {
                 $this->isClosed() => 'closed',
                 $prediction?->locked_at !== null => 'locked',

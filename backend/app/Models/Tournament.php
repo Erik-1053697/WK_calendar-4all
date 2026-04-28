@@ -42,4 +42,14 @@ class Tournament extends Model
     {
         return $this->hasMany(LeaderboardEntry::class);
     }
+
+    public function winnerPredictions(): HasMany
+    {
+        return $this->hasMany(TournamentWinnerPrediction::class);
+    }
+
+    public function predictionGroups(): HasMany
+    {
+        return $this->hasMany(PredictionGroup::class);
+    }
 }

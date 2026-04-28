@@ -52,6 +52,8 @@ class MatchController extends Controller
 
         $match->load([
             'venue.city',
+            'homeTeam',
+            'awayTeam',
             'predictions' => fn ($query) => $user
                 ? $query->where('user_id', $user->id)
                 : $query->whereRaw('1 = 0'),
@@ -96,6 +98,8 @@ class MatchController extends Controller
         return TournamentMatch::query()
             ->with([
                 'venue.city',
+                'homeTeam',
+                'awayTeam',
                 'predictions' => fn ($query) => $user
                     ? $query->where('user_id', $user->id)
                     : $query->whereRaw('1 = 0'),
